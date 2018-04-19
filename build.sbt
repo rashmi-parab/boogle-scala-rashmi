@@ -12,6 +12,6 @@ libraryDependencies ++= Seq(
   ws,
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test,
   "org.apache.pdfbox" % "pdfbox" % "1.8.2",
-  "org.reactivemongo" %% "play2-reactivemongo" % "0.13.0-play25"
-)
+  "org.reactivemongo" %% "play2-reactivemongo" % "0.13.0-play25")
 
+routesGenerator := InjectedRoutesGenerator
