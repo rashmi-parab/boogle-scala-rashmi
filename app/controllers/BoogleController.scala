@@ -1,10 +1,12 @@
 package controllers
 
 import javax.inject._
+
 import models.BookDetails
 import play.api.libs.json._
 import play.api.mvc._
 import repository.BookDetailsRepository
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
@@ -15,12 +17,20 @@ class BoogleController @Inject()(bookDetailsRepository: BookDetailsRepository) e
 
   def uploadBook = Action.async(parse.json) { implicit request =>
     withValidJsonBody[BookDetails] { bookDetails =>
-      bookDetailsRepository.saveBookDetails(bookDetails).map { _ =>
+      bookDetailsRepository.save(bookDetails).map { _ =>
         Created(s"Book : ${bookDetails.title} uploaded successfully")
       } recover {
         case ex: Exception => InternalServerError(ex.getMessage)
       }
     }
+  }
+
+  def findBook(searchString: Option[String]) = Action.async { implicit request =>
+    val result = searchString match {
+      case Some(s) => bookDetailsRepository.find(s)
+      case None => bookDetailsRepository.findAll()
+    }
+    result.map { books => if (books.nonEmpty) Ok(Json.toJson(books)) else NotFound }
   }
 
   private def withValidJsonBody[T](f: (T) => Future[Result])(implicit request: Request[JsValue], m: Manifest[T], reads: Reads[T]) =

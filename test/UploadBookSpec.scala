@@ -4,7 +4,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers._
 import play.api.test._
 
-class ApplicationSpec extends PlaySpec with OneAppPerTest {
+class UploadBookSpec extends PlaySpec with OneAppPerTest {
 
   "BoogleController - POST /boogle/books" should {
 
