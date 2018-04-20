@@ -1,14 +1,87 @@
-This is your new Play application
-=================================
+App Configuration
+=================
 
-This file will be packaged with your application when using `activator dist`.
+To run this app you will need :
 
-There are several demonstration files available in this template.
+1. Sbt installed
+2. Mongo db installed and running
 
-Controllers
+Go to project directory and run command : sbt run (this will run application on default port 9000)
+To run tests : sbt test
+
+
+Test Data
 ===========
 
-- HomeController.scala:
+Once you have the app running on port 9000, you can start calling the api's using curl or any rest client
 
-  Shows how to handle simple HTTP requests.
+curl -H “Content-Type: application/json” -X POST -d ‘{“title” : “Functional Programming in Scala","author" : "rashmi"year" : 2015,"contents" : "Functional programming FP is based on a simple premise with far-reaching implications"}' http://localhost:9000/boogle/books
+curl GET http://localhost:9000/boogle/books?searchString="Scala"
 
+Boogle API's
+==========
+
+## API
+
+| Path                              | Supported Methods  | Description                                                                   |
+| --------------------------------- | ------------------ | ------------------------------------------------------------------------------|
+| /boogle/books                     |        POST        | upload a book to database                                                     |
+| /boogle/books?searchString=""     |        GET         | finds all the books where title,author or content contains given searchString |
+
+
+###POST /boogle/books
+
+The request body must be a valid Json with the following keys:
+
+ - `title`: any text
+ - `author`: any text
+ - `year`: number as Integer
+ - `contents` : any text
+
+Responds with:
+
+| Status          | Message                                                       |
+|  -------------  |---------------------------------------------------------------|
+| 201             | CREATED                                                       |
+| 400             | Invalid request                                               |
+| 500             | If something goes wrong like mongo shut down or network error |
+
+
+Sample Request body :
+
+  {
+    "title" : "Functional Programming in Scala",
+    "author" : "PAUL CHIUSANO",
+    "year" : 2015,
+    "contents" : "Functional programming (FP) is based on a simple premise with far-reaching implications"
+   }
+
+
+###GET /boogle/books?searchString="someString"
+
+Returns list of all books if no "searchString" is given. Else it matches the given "searchString"
+with title, author or contents of book and returns matched book/books if any.
+
+Responds with:
+
+| Status          | Message                                                       |
+|  -------------  |---------------------------------------------------------------|
+| 200             | OK with list matched books                                    |
+| 404             | Not Found                                                     |
+
+
+Sample Response body :
+
+   [{
+          "title": "Book2",
+          "author": "author2",
+          "year": 2015,
+          "contents": "Book1 is a better read"
+      },
+      {
+          "title": "Book1",
+          "author": "author1",
+          "year": 2015,
+          "contents": "Book1 is a good read"
+      }
+    ]
